@@ -7,6 +7,11 @@ routerAdmin.get("/", adminController.goHome);
 routerAdmin
   .get("/login", adminController.login)
   .post("/login", adminController.processLogin);
-routerAdmin.get("/signup", adminController.signup).post("/signup", adminController.processSignup);
+routerAdmin
+  .get("/signup", adminController.signup)
+  .post("/signup", adminController.processSignup);
+routerAdmin.get("/check-me", adminController.checkAuthSession);
+
+routerAdmin.get("/logout", adminController.logout);
 
 export default routerAdmin;

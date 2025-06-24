@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { T } from "../libs/types/common";
 import MemberService from "../models/Member.service";
-import { MemberInput } from "../libs/types/member";
-import Errors, { HttpCode, Message }  from "../libs/Error";
+import { AdminRequest, MemberInput } from "../libs/types/member";
+import Errors, { HttpCode, Message } from "../libs/Error";
 import { MemberType } from "../libs/enums/member.enum";
 const adminController: T = {};
 
@@ -12,7 +12,7 @@ adminController.goHome = (req: Request, res: Response) => {
   try {
     console.log("goHome");
 
-    res.send("Home page");
+    res.render("home");
   } catch (err) {
     console.log(err);
   }
@@ -36,29 +36,65 @@ adminController.login = (req: Request, res: Response) => {
   }
 };
 
-adminController.processLogin = async (req: Request, res: Response) => {
+adminController.processLogin = async (req: AdminRequest, res: Response) => {
   try {
     console.log("processLogin");
     const result = await memberService.processLogin(req.body);
-    res.send(result);
+    req.session.member = result;
+    req.session.save(function () {
+      res.send(result);
+    });
   } catch (err) {
     console.log(err);
-    res.send(err)
+    const message =
+      err instanceof Errors ? err.message : Message.SOMETHING_WENT_WRONG;
+    res.send(
+      `<script>alert("${message}"); window.location.replace('/admin/login')</script>`
+    );
   }
 };
 
-adminController.processSignup = async (req: Request, res: Response) => {
+adminController.processSignup = async (req: AdminRequest, res: Response) => {
   try {
     console.log("signup");
     const newMember: MemberInput = req.body;
     console.log("body", req.body);
-    newMember.memberType = MemberType.RESTAURANT
+    newMember.memberType = MemberType.RESTAURANT;
     const result = await memberService.processSignup(newMember);
-    res.send(result);
+    req.session.member = result;
+    req.session.save(function () {
+      res.send(result);
+    });
   } catch (err) {
     console.log(err);
-    res.send(err)
-    // throw new Errors(HttpCode.BAD_REQUEST, Message.SOMETHING_WENT_WRONG);
+    const message =
+      err instanceof Errors ? err.message : Message.SOMETHING_WENT_WRONG;
+    res.send(
+      `<script>alert("${message}"); window.location.replace('/admin/signup')</script>`
+    );
+  }
+};
+
+adminController.checkAuthSession = async (req: AdminRequest, res: Response) => {
+  try {
+    console.log("checkAuthSession");
+    if (req.session?.member) res.send(`Hi ${req.session?.member.memberNick}`);
+    else throw new Errors(HttpCode.BAD_REQUEST, Message.NOT_AUTHENTICATED);
+  } catch (err) {
+    console.log(err);
+    res.send(err);
+  }
+};
+
+adminController.logout = async (req: Request, res: Response) => {
+  try {
+    console.log("logout");
+    req.session.destroy(function () {
+      res.redirect("/admin");
+    });
+  } catch (err) {
+    console.log(err);
+    res.send('/admin');
   }
 };
 
