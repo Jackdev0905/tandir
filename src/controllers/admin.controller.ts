@@ -25,7 +25,7 @@ adminController.goHome = (req: Request, res: Response) => {
 adminController.signup = (req: Request, res: Response) => {
   try {
     console.log("signup");
-    res.send("signup page");
+    res.render("signup");
   } catch (err) {
     console.log(err);
   }
@@ -34,7 +34,7 @@ adminController.signup = (req: Request, res: Response) => {
 adminController.login = (req: Request, res: Response) => {
   try {
     console.log("login");
-    res.send("Login page");
+    res.render("login");
   } catch (err) {
     console.log(err);
   }
