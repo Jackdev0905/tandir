@@ -1,7 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import { T } from "../libs/types/common";
 import MemberService from "../models/Member.service";
-import { AdminRequest, MemberInput } from "../libs/types/member";
+import {
+  AdminRequest,
+  MemberInput,
+  MemberUpdateInput,
+} from "../libs/types/member";
 import Errors, { HttpCode, Message } from "../libs/Error";
 import { MemberType } from "../libs/enums/member.enum";
 const adminController: T = {};
@@ -115,6 +119,31 @@ adminController.logout = async (req: Request, res: Response) => {
   } catch (err) {
     console.log(err);
     res.send("/admin");
+  }
+};
+
+adminController.updateChosenUser = async (req: Request, res: Response) => {
+  try {
+    console.log("updateChosenUser");
+    const user: MemberUpdateInput = req.body;
+    const result = await memberService.updateChosenUser(user);
+    res.status(HttpCode.OK).json({ data: result });
+  } catch (err) {
+    console.log("updateChosenUser:", err);
+    if (err instanceof Errors) res.status(err.code).json(err);
+    else res.status(Errors.standart.code).json(Errors.standart);
+  }
+};
+
+adminController.getUsers = async (req: Request, res: Response) => {
+  try {
+    console.log("getAllUsers");
+    const result = await memberService.getUsers();
+    res.status(HttpCode.OK).json({ data: result });
+  } catch (err) {
+    console.log("getAllUsers:", err);
+    if (err instanceof Errors) res.status(err.code).json(err);
+    else res.status(Errors.standart.code).json(Errors.standart);
   }
 };
 
