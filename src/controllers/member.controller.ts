@@ -25,7 +25,7 @@ memberController.login = async (req: Request, res: Response) => {
     if (err instanceof Errors) res.status(err.code).json(err);
     else res.status(Errors.standart.code).json(Errors.standart);
   }
-};
+}; 
 
 memberController.signup = async (req: Request, res: Response) => {
   try {

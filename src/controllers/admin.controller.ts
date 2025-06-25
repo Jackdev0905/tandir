@@ -42,7 +42,7 @@ adminController.processLogin = async (req: AdminRequest, res: Response) => {
     const result = await memberService.processLogin(req.body);
     req.session.member = result;
     req.session.save(function () {
-      res.send(result);
+      res.redirect("/admin/product/all");
     });
   } catch (err) {
     console.log(err);
@@ -58,12 +58,15 @@ adminController.processSignup = async (req: AdminRequest, res: Response) => {
   try {
     console.log("signup");
     const newMember: MemberInput = req.body;
-    console.log("body", req.body);
+    const file = req.file;
+    if (!file)
+      throw new Errors(HttpCode.BAD_REQUEST, Message.SOMETHING_WENT_WRONG);
+    newMember.memberImage = file.path.replace(/\\/g, "/");
     newMember.memberType = MemberType.RESTAURANT;
     const result = await memberService.processSignup(newMember);
     req.session.member = result;
     req.session.save(function () {
-      res.send(result);
+      res.redirect("/admin/product/all");
     });
   } catch (err) {
     console.log(err);
@@ -95,8 +98,7 @@ adminController.verifyAdmin = (
   if (req.session?.member?.memberType === MemberType.RESTAURANT) {
     req.member = req.session.member;
     next();
-  }
-   else {
+  } else {
     const message = Message.NOT_AUTHENTICATED;
     res.send(
       `<script>alert("${message}"); window.location.replace('/admin/login')</script>`

@@ -13,7 +13,11 @@ routerAdmin
   .post("/login", adminController.processLogin);
 routerAdmin
   .get("/signup", adminController.signup)
-  .post("/signup", adminController.processSignup);
+  .post(
+    "/signup",
+    makeUploader("members").single("memberImage"),
+    adminController.processSignup
+  );
 routerAdmin.get("/check-me", adminController.checkAuthSession);
 
 routerAdmin.get("/logout", adminController.logout);
@@ -24,7 +28,16 @@ routerAdmin.get(
   adminController.verifyAdmin,
   productController.getAllProducts
 );
-routerAdmin.post("/product/create",makeUploader("products").array("productImages", 5), productController.createNewProduct);
-routerAdmin.post("/product/:id", productController.updateChosenProduct);
+routerAdmin.post(
+  "/product/create",
+  adminController.verifyAdmin,
+  makeUploader("products").array("productImages", 5),
+  productController.createNewProduct
+);
+routerAdmin.post(
+  "/product/:id",
+  adminController.verifyAdmin,
+  productController.updateChosenProduct
+);
 
 export default routerAdmin;
