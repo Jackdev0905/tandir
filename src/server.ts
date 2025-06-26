@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 dotenv.config();
 
 import app from "./app";
-
+mongoose.set('strictQuery', false);
 mongoose
   .connect(process.env.MONGO_URL as string, {})
   .then(() => {

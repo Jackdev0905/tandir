@@ -5,14 +5,10 @@
   <body>
     <div class="signup-container">
       <form onsubmit="return validateSignup()" action="/admin/signup" method="POST" enctype="multipart/form-data">
-        <div class="signup-frame" style="width: 650px">
+        <div class="signup-frame">
           <div class="signup-top">
-            <span>Signup</span>
             <div>Go back <a href="/admin" style="color: #6440fb">Home</a></div>
-            <p>
-              Already signed up?
-              <a href="/admin/login" style="color: #6440fb">Login</a>
-            </p>
+            
           </div>
 
           <div class="sign-input-frame" style="justify-content: space-between">
@@ -39,7 +35,7 @@
 
           <div class="signup-input-frame">
             <div class="media-frame">
-              <img class="upload-img-frame" src="/img/default.jpeg" />
+              <img class="upload-img-frame " src="/img/default.jpg" />
               <div class="upload-container">
                 <span class="media-text">Product image</span>
                 <div class="file-box bs3-primary preview-image" style="margin-top: 25px; display: flex">
@@ -62,10 +58,25 @@
           <button class="signup-btn btn" name="signup" type="submit">
             Signup
           </button>
+          <div style="text-align: center;">
+              Already signed up?
+              <a href="/admin/login" style="color: #6440fb">Login</a>
+          </div>
         </div>
       </form>
     </div>
-
+    <ul class="bg-bubbles">
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+    </ul>
     <script type="text/javascript" src="/js/signup.js"></script>
   </body>
 

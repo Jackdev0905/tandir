@@ -7,7 +7,7 @@ import {
   MemberInput,
   MemberUpdateInput,
 } from "../libs/types/member";
-import { MemberType } from "../libs/enums/member.enum";
+import { MemberStatus, MemberType } from "../libs/enums/member.enum";
 import bcrypt from "bcrypt";
 import { shapeIntoMongooseObjectId } from "../libs/config";
 
@@ -35,12 +35,16 @@ class MemberService {
       .findOne(
         {
           memberNick: input.memberNick,
+          memberStatus: { $ne: MemberStatus.DELETE },
         },
-        { memberNick: 1, memberPassword: 1 }
+        { memberNick: 1, memberPassword: 1, memberStatus: 1 }
       )
       .exec();
 
     if (!member) throw new Errors(HttpCode.BAD_REQUEST, Message.NO_MEMBER_NICK);
+    if(member.memberStatus === MemberStatus.BLOCK){
+      throw new Errors(HttpCode.FORBIDDEN, Message.BLOCKED_USER);
+    }
     const isMatch = await bcrypt.compare(
       input.memberPassword,
       member.memberPassword
@@ -105,7 +109,7 @@ class MemberService {
   public async updateChosenUser(
     input: MemberUpdateInput
   ): Promise<Member | null> {
-    input._id = shapeIntoMongooseObjectId(input._id)
+    input._id = shapeIntoMongooseObjectId(input._id);
     const result: Member | null = await this.memberModel.findByIdAndUpdate(
       input._id,
       input,

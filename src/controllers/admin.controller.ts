@@ -139,7 +139,7 @@ adminController.getUsers = async (req: Request, res: Response) => {
   try {
     console.log("getAllUsers");
     const result = await memberService.getUsers();
-    res.status(HttpCode.OK).json({ data: result });
+    res.render("users", { users: result });
   } catch (err) {
     console.log("getAllUsers:", err);
     if (err instanceof Errors) res.status(err.code).json(err);
