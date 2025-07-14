@@ -1,20 +1,65 @@
-import { Request, Response } from "express";
+import { Response, Request } from "express";
+
 import { T } from "../libs/types/common";
 import Errors, { HttpCode, Message } from "../libs/Error";
-import { AdminRequest } from "../libs/types/member";
 import ProductService from "../models/Product.service";
-import { ProductInput, ProductUpdateInput } from "../libs/types/product";
-import { shapeIntoMongooseObjectId } from "../libs/config";
+import { ProductInput, ProductInquiry } from "../libs/types/product";
+import { AdminRequest, ExtendRequest } from "../libs/types/member";
+import { ProductCollection } from "../libs/enums/product.enum";
 
 const productController: T = {};
 const productService = new ProductService();
+/** SPA  */
 
-productController.getAllProducts = async (req: AdminRequest, res: Response) => {
+productController.getProducts = async (req: Request, res: Response) => {
   try {
-    console.log("getAllProducts");
-    res.render("product");
+    console.log("getProducts");
+    const { order, page, limit, productCollection, search } = req.query;
+    console.log();
+    const inquiry: ProductInquiry = {
+      order: String(order),
+      page: Number(page),
+      limit: Number(limit),
+    };
+    if (productCollection)
+      inquiry.productCollection = productCollection as ProductCollection;
+    if(search) inquiry.search = String(search) 
+
+    const result = await productService.getProducts(inquiry)
+    res.status(HttpCode.OK).json(result);
   } catch (err) {
-    console.log("getAllProducts:", err);
+    console.log("Error, getProducts", err);
+    if (err instanceof Errors) res.status(err.code).json(err);
+    else res.status(Errors.standart.code).json(Errors.standart);
+  }
+};
+
+
+productController.getProduct = async (req: ExtendRequest, res: Response) => {
+  try {
+    console.log("getProduct");
+    const {id } = req.params;
+    
+    const memberId = req?.member?._id ?? null;
+
+    const result = await productService.getProduct(memberId, id)
+    res.status(HttpCode.OK).json(result);
+  } catch (err) {
+    console.log("Error, getProduct", err);
+    if (err instanceof Errors) res.status(err.code).json(err);
+    else res.status(Errors.standart.code).json(Errors.standart);
+  }
+};
+
+/** SSR  */
+productController.getAllProducts = async (req: Request, res: Response) => {
+  try {
+    console.log(" getAllProducts");
+    const data = await productService.getAllProducts();
+
+    res.render("products", { products: data });
+  } catch (err) {
+    console.log("Error, getAllProducts", err);
     if (err instanceof Errors) res.status(err.code).json(err);
     else res.status(Errors.standart.code).json(Errors.standart);
   }
@@ -25,20 +70,21 @@ productController.createNewProduct = async (
   res: Response
 ) => {
   try {
-    console.log("createNewProduct");
     if (!req.files?.length)
       throw new Errors(HttpCode.INTERNAL_SERVER_ERROR, Message.CREATE_FAILED);
-    const newProduct: ProductInput = req.body;
-    newProduct.productImages = req.files?.map((ele: T) =>
-      ele.path.replace(/\\/g, "/")
-    );
-    console.log("data", newProduct);
-    await productService.createNewProduct(newProduct);
+    console.log(" createNewProduct");
+    const data: ProductInput = req.body;
+    data.productImages = req.files?.map((ele) => {
+      return ele.path;
+    });
+    console.log("data:", data);
+
+    await productService.createNewProduct(data);
     res.send(
       `<script>alert("Sucsessful creation"); window.location.replace('/admin/product/all')</script>`
     );
   } catch (err) {
-    console.log("createNewProduct:", err);
+    console.log("Error, createNewProduct", err);
     const message =
       err instanceof Errors ? err.message : Message.SOMETHING_WENT_WRONG;
     res.send(
@@ -49,25 +95,15 @@ productController.createNewProduct = async (
 
 productController.updateChosenProduct = async (req: Request, res: Response) => {
   try {
-    console.log("updateChosenProduct");
-    const product: ProductUpdateInput = req.body;
-    const id = shapeIntoMongooseObjectId(req.params?.id);
-    const result = await productService.updateChosenProduct(id, product);
-    res.status(HttpCode.OK).json({ data: result });
+    console.log(" updateChosenProduct");
+    const id = req.params.id;
+    console.log("body:", req.body);
+    const result = await productService.updateChosenProduct(id, req.body);
+    res.send(
+      `<script>alert("Sucsessfully updated"); window.location.replace('/admin/product/all')</script>`
+    );
   } catch (err) {
-    console.log("updateChosenProduct:", err);
-    if (err instanceof Errors) res.status(err.code).json(err);
-    else res.status(Errors.standart.code).json(Errors.standart);
-  }
-};
-
-productController.getAllProducts = async (req: Request, res: Response) => {
-  try {
-    console.log("getAllProducts");
-    const result = await productService.getAllProducts();
-    res.render("products", { products: result });
-  } catch (err) {
-    console.log("getAllProducts:", err);
+    console.log("Error, updateChosenProduct", err);
     if (err instanceof Errors) res.status(err.code).json(err);
     else res.status(Errors.standart.code).json(Errors.standart);
   }

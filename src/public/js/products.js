@@ -12,9 +12,12 @@ $(function () {
     }
   });
 
-  $("#process-btn").on("click", () => { 
+  $("#process-btn").on("click", () => {
     $(".dish-container").slideToggle(400);
     $("#process-btn").css("display", "none");
+    $(".new-dish-txt").text("NEW PRODUCT DETAIL");
+    $("#create-btn").text("Create");
+    $(".dish-container").attr("action", "/admin/product/create");
   });
 
   $("#cancel-btn").on("click", () => {
@@ -23,6 +26,7 @@ $(function () {
   });
 
   $(".new-product-status").on("change", async function (e) {
+     e.stopPropagation();
     const id = e.target.id;
     const productStatus = $(`#${id}.new-product-status`).val();
     try {
@@ -45,13 +49,53 @@ $(function () {
   });
 });
 
+
+
+async function editHandler(data) {
+  $(".dish-container").show(400);
+  $("#process-btn").css("display", "none");
+  $("#create-btn").text("Edit");
+  $(".new-dish-txt").text("PRODUCT DETAIL");
+
+  const product = JSON.parse(data);
+  console.log(product);
+
+  $(".product-name").val(product.productName);
+  $(".product-price").val(product.productPrice);
+  $(".product-left-count").val(product.productLeftCount);
+  $(".product-collection").val(product.productCollection);
+  $(".product-desc").val(product.productDesc);
+
+  product.productImages.map((ele, key) => {
+    $(`#image-section-${key + 1}`).attr("src", `http://localhost:3003/${ele}`);
+  });
+  $(".dish-container").attr("action", `/admin/product/${product._id}`);
+
+  // try {
+  //   const response = await axios.post(`/admin/product/${product._id}`, {
+  //     productName: $(".product-name").val(),
+  //     productPrice: $(".product-price").val(),
+  //     productCollection: $(".product-collection").val(),
+  //     productLeftCount: $(".product-left-count").val(),
+  //     productDesc: $(".product-desc").val(),
+  //     productSize: $(".product-size").val(),
+  //     productVolume: $(".product-volume").val(),
+  //   });
+  //   const result = response.data;
+  //   console.log("response", response);
+
+  // } catch (err) {
+  //   console.log("Error, productStatus", err);
+  //   alert("Updating failed");
+  // }
+}
+
 function validateForm() {
   const productName = $(".product-name").val(),
     productPrice = $(".product-price").val(),
     productLeftCount = $(".product-left-count").val(),
     productCollection = $(".product-collection").val(),
-    productDesc = $(".product-desc").val(),
-    productStatus = $(".product-status").val();
+    productDesc = $(".product-desc").val();
 
   if (
     productName === "" ||
