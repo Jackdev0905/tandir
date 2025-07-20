@@ -11,13 +11,10 @@
   background: linear-gradient(to bottom right, #50a3a2 0%, #53e3a6 100%);
 }
 
-.users-container a {
-  text-decoration: none;
-  color: #000000;
-}
 
 .users-container .nav-item a {
-  color: #e3c08d;
+  color: #f39322;
+  cursor: pointer;
 }
 
 .users-container .nav-item a.disabled {
@@ -66,7 +63,7 @@
 
 .users-container .board .user-table {
   position: relative;
-  width: 85%;
+  width: 100%;
   height: auto;
   margin-top: 30px;
   display: flex;

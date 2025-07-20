@@ -115,7 +115,7 @@ class ProductService {
 
   public async updateChosenProduct(
     id: string,
-    input: ProductUpdateInput
+    input: any
   ): Promise<Product> {
     id = shapeIntoMongooseObjectId(id);
     const result = await this.productModel

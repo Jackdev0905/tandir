@@ -53,8 +53,8 @@
                 </thead>
                 <!--  LOOP PRODUCTS: START  -->
                 <% products.map((value, key)=> {%>
-                  <tbody class="edit-product" style="background: white" data-product='<%- JSON.stringify(value) %>'
-                    onclick="editHandler(this.dataset.product), edit=true">
+                  <tr class="edit-product" style="background: white"'
+                    ">
 
                     <td>
                       <%= key+1 %>
@@ -76,13 +76,13 @@
                     </td>
                     <td>
                       <select class="spec-select new-product-status" id="<%= value._id %>" >
-                        <option value="PAUSE" <%=value.productStatus==="PAUSE" ? 'selected' : '' %>>PAUSE</option>
-                        <option value="PROCESS" <%=value.productStatus==="PROCESS" ? 'selected' : '' %>>PROCESS</option>
-                        <option value="DELETE" <%=value.productStatus==="DELETE" ? 'selected' : '' %>>DELETE</option>
-                      </select>
+                        <option value="PAUSE" <%=value.productStatus==="PAUSE" ? ' selected' : '' %>>PAUSE</option>
+                    <option value="PROCESS" <%=value.productStatus==="PROCESS" ? 'selected' : '' %>>PROCESS</option>
+                    <option value="DELETE" <%=value.productStatus==="DELETE" ? 'selected' : '' %>>DELETE</option>
+                    </select>
                     </td>
 
-                  </tbody>
+                  </tr>
                   <% }) %>
                     <!--  LOOP PRODUCTS: END  -->
               </table>
@@ -95,9 +95,7 @@
             <form onsubmit=" return validateForm()" action="/admin/product/create" method="POST" class="dish-container"
               enctype="multipart/form-data">
               <div class="long-input" style="display: flex; align-items: center">
-                <span class="new-dish-txt">
-                  NEW PRODUCT DETAIL
-                </span>
+                <span class="new-dish-txt">NEW PRODUCT DETAIL</span>
               </div>
               <div class="login-input-frame">
                 <div class="long-input">
@@ -182,13 +180,11 @@
                     <input type="file" id="file" name="productImages" onchange="previewFileHandler(this, 5)"
                       class="image-five" />
                   </div>
-                  <!-- <input name="restaurantId" class="restaurant-id" hidden /> -->
                 </div>
               </div>
 
               <div class="operation-buttons">
                 <button class="btn btn-danger" id="cancel-btn">Cancel</button>
-
                 <button type="submit" class="btn btn-primary" id="create-btn">
                   Create
                 </button>

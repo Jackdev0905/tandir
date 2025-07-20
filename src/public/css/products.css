@@ -30,14 +30,10 @@
   background-color: #f5f7f9;
 }
 
-.products-container a {
-  text-decoration: none;
-  color: #000000;
-}
 
 .products-container .nav-item a {
   cursor: pointer;
-  color: #e3c08d;
+  color: #f39322;
 }
 
 .products-container .nav-item a.disabled {

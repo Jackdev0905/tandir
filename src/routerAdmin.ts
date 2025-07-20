@@ -46,6 +46,7 @@ routerAdmin.post(
 routerAdmin.post(
   "/product/:id",
   restaurantController.verifyRestaurant,
+  makeUploader("products").array("productImages", 5),
   productController.updateChosenProduct
 );
 

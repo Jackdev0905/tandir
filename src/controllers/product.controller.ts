@@ -23,9 +23,9 @@ productController.getProducts = async (req: Request, res: Response) => {
     };
     if (productCollection)
       inquiry.productCollection = productCollection as ProductCollection;
-    if(search) inquiry.search = String(search) 
+    if (search) inquiry.search = String(search);
 
-    const result = await productService.getProducts(inquiry)
+    const result = await productService.getProducts(inquiry);
     res.status(HttpCode.OK).json(result);
   } catch (err) {
     console.log("Error, getProducts", err);
@@ -34,15 +34,14 @@ productController.getProducts = async (req: Request, res: Response) => {
   }
 };
 
-
 productController.getProduct = async (req: ExtendRequest, res: Response) => {
   try {
     console.log("getProduct");
-    const {id } = req.params;
-    
+    const { id } = req.params;
+
     const memberId = req?.member?._id ?? null;
 
-    const result = await productService.getProduct(memberId, id)
+    const result = await productService.getProduct(memberId, id);
     res.status(HttpCode.OK).json(result);
   } catch (err) {
     console.log("Error, getProduct", err);
@@ -97,7 +96,6 @@ productController.updateChosenProduct = async (req: Request, res: Response) => {
   try {
     console.log(" updateChosenProduct");
     const id = req.params.id;
-    console.log("body:", req.body);
     const result = await productService.updateChosenProduct(id, req.body);
     res.send(
       `<script>alert("Sucsessfully updated"); window.location.replace('/admin/product/all')</script>`
