@@ -1,0 +1,164 @@
+<%- include('includes/header') %>
+
+  <link rel="stylesheet" type="text/css" href="/css/event.css" />
+  <% let edit=false; %>
+
+    <body>
+      <div class="events-container">
+        <div class="navigation-menu">
+          <ul class="nav justify-content-center">
+            <li class="nav-item" style="cursor: pointer">
+              <a class="nav-link active" href="/admin/">Home</a>
+            </li>
+            <li class="nav-item" style="cursor: pointer">
+              <a class="nav-link" href="/admin/event/all">Menu</a>
+            </li>
+            <li class="nav-item" style="cursor: pointer">
+              <a class="nav-link" href="/admin/user/all">Users</a>
+            </li>
+            <li class="nav-item" style="cursor: pointer">
+              <a class="nav-link" href="/admin/event/all">Events</a>
+            </li>
+            <li class="nav-item" style="cursor: pointer" onclick="return confirm('Do you want to logout?')">
+              <a class="nav-link" href="/admin/logout">Logout</a>
+            </li>
+          </ul>
+        </div>
+        <ul class="bg-bubbles">
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+        </ul>
+        <div class="event-menu-frame">
+          <div class="board">
+            <div class="events-table">
+              <h1 class="new-event-txt">
+                EVENTS
+              </h1>
+              <table class="table table-bordered table-hover">
+                <thead class="thead-light">
+                  <tr class="thead-light">
+                    <th scope="col">T/r</th>
+                    <th scope="col">Event Title</th>
+                    <th scope="col">Event Author</th>
+                    <th scope="col">Event Location</th>
+                    <th scope="col">Event Date</th>
+                    <th scope="col">Event Description</th>
+                    <th scope="col">Status</th>
+                  </tr>
+                </thead>
+                <!--  LOOP eventS: START  -->
+                <% events.map((value, key)=> {%>
+                  <tr class="edit-event" style="background: white"'
+                    ">
+
+                    <td>
+                      <%= key+1 %>
+                    </td>
+                    <td>
+                      <%= value.eventTitle %>
+                    </td>
+                    <td>
+                      <%= value.eventAuthor %>
+                    </td>
+                    
+                    <td>
+                      <%= value.eventLocation %>
+                    </td>
+                    <td>
+                      <%= value.eventDate %>
+                    </td>
+                    <td>
+                      <%= value.eventDesc %>
+                    </td>
+                    <td>
+                      <select class="spec-select new-event-status" id="<%= value._id %>" >
+                        <option value="PAUSE" <%=value.eventStatus==="PAUSE" ? ' selected' : '' %>>PAUSE</option>
+                    <option value="PROCESS" <%=value.eventStatus==="PROCESS" ? 'selected' : '' %>>PROCESS</option>
+                    <option value="DELETE" <%=value.eventStatus==="DELETE" ? 'selected' : '' %>>DELETE</option>
+                    </select>
+                    </td>
+
+                  </tr>
+                  <% }) %>
+                    <!--  LOOP eventS: END  -->
+              </table>
+              <div class="new-event">
+                <button id="process-btn">
+                  New Event
+                </button>
+              </div>
+            </div>
+            <form   enctype="multipart/form-data" onsubmit="return validateForm()" action="/admin/event/create" method="POST" class="event-form">
+              <h1 class="new-event-txt">NEW EVENT DETAIL</h1>
+              <div class="all-input" style="display: flex;">
+                <div class="input-frame ">
+                  <input name="eventStatus" value="PAUSE" class="event-status" hidden />
+                  <div class="input-wrapper">
+                    <label>Event Title</label>
+                    <input type="text" placeholder="Title" name="eventTitle" class="event-title" />
+                  </div>
+                  <div class="input-wrapper">
+                    <label>Event Author</label>
+                    <input type="text" placeholder="Author" name="eventAuthor" class="event-author" />
+                  </div>
+                  <div class="input-wrapper">
+                    <label>Event Location</label>
+                    <input type="text" placeholder="Location" name="eventLocation" class="event-location" />
+                  </div>
+                  <div class="input-wrapper">
+                    <label>Event Date</label>
+                    <input type="date" placeholder="Date" name="eventDate" class="event-date" />
+                  </div>
+                </div>
+
+                <div class="media-frame">
+                  <label>Event Image</label>
+                  <div class="upload-container">
+                    <div class="image-txt">
+                      <p class="image-desc">
+                        Please upload only:.jpg, .jpeg, or .png. formats
+                      </p>
+                      <div class="file-box preview-image">
+                        <input type="file" id="input-file" class="upload-hidden form-control-file member-image"
+                          name="eventImage" />
+                      </div>
+                    </div>
+
+
+                  </div>
+                  <img class="upload-img-frame" src="/img/default.jpg" />
+
+                </div>
+
+              </div>
+              <div class="input-wrapper ">
+                <label>Event Description</label>
+                <textarea name="eventDesc" class="event-desc"></textarea>
+              </div>
+
+
+              <div class="operation-buttons">
+                <button class="btn btn-danger" id="cancel-btn">Cancel</button>
+                <button type="submit" class="btn btn-primary" id="create-btn">
+                  Create
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <script type="text/javascript" src="/js/event.js">
+
+      </script>
+    </body>
+
+    <%- include('includes/footer') %>

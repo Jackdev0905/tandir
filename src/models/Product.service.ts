@@ -93,16 +93,32 @@ class ProductService {
   }
 
   /** SSR  */
-  public async getAllProducts(): Promise<Product[]> {
-    try {
-      const result = await this.productModel.find().exec();
-      if (!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
-      return result as any;
-    } catch (err) {
-      console.log("error: createNewProduct", err);
-      throw new Errors(HttpCode.BAD_REQUEST, Message.CREATE_FAILED);
-    }
+ public async getAllProducts(page: number, limit: number): Promise<{ products: Product[], pagination: any }> {
+  try {
+    const skip = (page - 1) * limit;
+    
+    const products = await this.productModel.find()
+      .skip(skip)
+      .limit(limit)
+      .exec();
+    
+    if (!products) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
+    const total = await this.productModel.countDocuments();
+    
+    return {
+      products: products as any,
+      pagination: {
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+        totalResults: total
+      }
+    };
+  } catch (err) {
+    console.log("error: getAllProducts", err);
+    throw new Errors(HttpCode.BAD_REQUEST, Message.SOMETHING_WENT_WRONG);
   }
+}
 
   public async createNewProduct(input: ProductInput): Promise<Product> {
     try {

@@ -53,10 +53,16 @@ productController.getProduct = async (req: ExtendRequest, res: Response) => {
 /** SSR  */
 productController.getAllProducts = async (req: Request, res: Response) => {
   try {
-    console.log(" getAllProducts");
-    const data = await productService.getAllProducts();
+    console.log("getAllProducts");
+    
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const { products, pagination } = await productService.getAllProducts(page, limit);
 
-    res.render("products", { products: data });
+    res.render("products", { 
+      products,
+      pagination 
+    });
   } catch (err) {
     console.log("Error, getAllProducts", err);
     if (err instanceof Errors) res.status(err.code).json(err);

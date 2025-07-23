@@ -3,6 +3,7 @@ const routerAdmin = express.Router();
 import restaurantController from "./controllers/restaurant.controller";
 import productController from "./controllers/product.controller";
 import makeUploader from "./libs/utils/uploader";
+import eventController from "./controllers/event.controller";
 
 // Restaurant
 routerAdmin.get("/", restaurantController.goHome);
@@ -28,7 +29,6 @@ routerAdmin.get("/check-me", restaurantController.checkAuthSession);
 routerAdmin.get(
   "/product/all",
   restaurantController.verifyRestaurant,
-
   productController.getAllProducts
 );
 routerAdmin.post(
@@ -36,11 +36,6 @@ routerAdmin.post(
   restaurantController.verifyRestaurant,
   makeUploader("products").array("productImages", 5),
   productController.createNewProduct
-);
-routerAdmin.post(
-  "/product/:id",
-  restaurantController.verifyRestaurant,
-  productController.updateChosenProduct
 );
 
 routerAdmin.post(
@@ -62,5 +57,25 @@ routerAdmin.post(
   "/user/edit",
   restaurantController.verifyRestaurant,
   restaurantController.updateChosenUser
+);
+
+// Event
+
+routerAdmin.get(
+  "/event/all",
+  restaurantController.verifyRestaurant,
+  eventController.getEvents
+);
+routerAdmin.post(
+  "/event/create",
+  restaurantController.verifyRestaurant,
+   makeUploader("events").single("eventImage"),
+  eventController.createEvent
+);
+
+routerAdmin.post(
+  "/event/:id",
+  restaurantController.verifyRestaurant,
+  eventController.updateChosenEvent
 );
 export default routerAdmin;

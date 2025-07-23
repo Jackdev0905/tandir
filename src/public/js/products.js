@@ -15,11 +15,9 @@ $(function () {
   $("#process-btn").on("click", () => {
     $(".dish-container").slideToggle(400);
     $("#process-btn").css("display", "none");
-    $(".dish-container").attr("onsubmit", " return validateForm()");
   });
 
   $("#cancel-btn").on("click", () => {
-    $(".dish-container").attr("onsubmit", "");
     $(".dish-container").slideToggle(400);
     $("#process-btn").css("display", "block");
   });
@@ -45,6 +43,33 @@ $(function () {
       alert("Updating failed");
     }
   });
+
+  // Handle limit selector change
+  $("#limit-selector").on("change", function () {
+    const newLimit = $(this).val();
+    const url = new URL(window.location.href);
+    url.searchParams.set("limit", newLimit);
+    // Reset to first page when changing limit
+    url.searchParams.set("page", 1);
+    window.location.href = url.toString();
+  });
+
+  // Preserve other query parameters when paginating
+  $(document).on("click", ".page-link", function (e) {
+    e.preventDefault();
+    const url = new URL($(this).attr("href"), window.location.origin);
+    const currentParams = new URLSearchParams(window.location.search);
+
+    // Preserve all existing query parameters except page/limit
+    currentParams.forEach((value, key) => {
+      if (key !== "page" && key !== "limit") {
+        url.searchParams.set(key, value);
+      }
+    });
+
+    window.location.href = url.toString();
+  });
+  
 });
 
 function validateForm() {
@@ -85,3 +110,47 @@ function previewFileHandler(input, order) {
     }
   }
 }
+// In your route file (e.g., routes/admin.js)
+router.get("/product/all", async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10; // Default to 10 items per page
+
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+
+    const results = {};
+
+    if (endIndex < (await Product.countDocuments().exec())) {
+      results.next = {
+        page: page + 1,
+        limit: limit,
+      };
+    }
+
+    if (startIndex > 0) {
+      results.previous = {
+        page: page - 1,
+        limit: limit,
+      };
+    }
+
+    results.total = await Product.countDocuments();
+    results.products = await Product.find()
+      .limit(limit)
+      .skip(startIndex)
+      .exec();
+
+    res.render("admin/products", {
+      products: results.products,
+      pagination: {
+        page,
+        limit,
+        totalPages: Math.ceil(results.total / limit),
+        totalResults: results.total,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});

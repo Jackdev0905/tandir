@@ -4,6 +4,7 @@ import memberController from "./controllers/member.controller";
 import uploader from "./libs/utils/uploader";
 import productController from "./controllers/product.controller";
 import orderController from "./controllers/order.controller";
+import eventController from "./controllers/event.controller";
 
 // MEMBER
 router.get("/member/restaurant", memberController.getRestaurant);
@@ -59,5 +60,8 @@ router.post(
   memberController.verifyAuth,
   orderController.updateOrder
 );
+// Event
+router.get("/event/all", eventController.getAllEvents);
+
 
 export default router;
