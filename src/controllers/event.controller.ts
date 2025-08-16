@@ -29,7 +29,6 @@ eventController.createEvent = async (req: ExtendRequest, res: Response) => {
 };
 eventController.getEvents = async (req: Request, res: Response) => {
   try {
-    console.log("getEvents", req);
 
     const result = await eventService.getEvents();
     console.log("result", result);
