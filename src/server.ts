@@ -5,6 +5,8 @@ dotenv.config({
 });
 import server from "./app";
 
+mongoose.set('strictQuery', true)
+
 mongoose.connect(process.env.MONGO_URL as string, {})
 .then((data)=>{
     console.log("Mongodb connection succeed");
